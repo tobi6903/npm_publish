@@ -9,7 +9,7 @@ export const Auth = ({type}:{type:"signin" | "signup"}) => {
     // const [userName,setUserName]=useState("");
     // const [email,setEmail]=useState("");
     // const [password,setPassword]=useState("");
-    const [postInputs,setPostInputs] = useState({
+    const [postInputs,setPostInputs] = useState<SignupInput>({
        name:"",
        email:"",
        password:""
