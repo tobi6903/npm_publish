@@ -1,5 +1,5 @@
 {
-  "name": "@273xdevs/medium-common",
+  "name": "blog_project_common",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",

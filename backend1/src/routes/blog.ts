@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign, verify } from 'hono/jwt'
 import { JWTPayload } from 'hono/utils/jwt/types'
+import { createBlogInput, updateBlogInput } from 'blog_project_common'
 const blogRouter = new Hono<{
     Bindings :{
       DATABASE_URL:string
@@ -54,7 +55,12 @@ blogRouter.post("/",async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
       }).$extends(withAccelerate());
-
+      const {success}=createBlogInput.safeParse(body);
+      if(!success){
+        return c.json({
+            msg:"Wrong form of input"
+        })
+      }
     const blog = await prisma.post.create({
         data:{
             title:body.title,
@@ -73,6 +79,12 @@ blogRouter.put("/",async (c)=>{
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL
     }).$extends(withAccelerate())
+   const {success}= updateBlogInput.safeParse(body);
+    if(!success){
+        return c.json({
+            msg:"wrong form of input"
+        })
+    }
     const blog = await prisma.post.update({
         where:{
             id : body.id

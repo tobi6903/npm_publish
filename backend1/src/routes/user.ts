@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
 import { z } from "zod"
+import { signinInput, signupInput } from "blog_project_common"
 
 const userRouter = new Hono<{
     Bindings :{
@@ -18,6 +19,13 @@ const userRouter = new Hono<{
     }).$extends(withAccelerate())
   
     const body = await c.req.json();
+    // const {success}=signinInput.safeParse(body);
+    // if(!success){
+    //   c.status(411);
+    //   return c.json({
+    //     msg:"Wrong form of inputs"
+    //   })
+    // }
     try{
     
       const user = await prisma.user.create({
@@ -35,6 +43,7 @@ const userRouter = new Hono<{
     }
     catch(e){
       c.status(411)
+      console.log(e);
       return c.json({
         msg:"Error while logging in"
       })
@@ -48,6 +57,14 @@ const userRouter = new Hono<{
     }).$extends(withAccelerate())
     try{
     const body = await c.req.json();
+    const {success}=signinInput.safeParse(body);
+    console.log(signinInput.safeParse(body));
+    console.log(success);
+    if(!success){
+      return c.json({
+        msg:"wrong form of message"
+      })
+    }
     const user = await prisma.user.findFirst({
       where:{
         email:body.email,
