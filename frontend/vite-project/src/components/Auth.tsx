@@ -17,12 +17,17 @@ export const Auth = ({type}:{type:"signin" | "signup"}) => {
     const navigate = useNavigate();
     async function sendRequest(){
        try{
-        const response = await await axios.post(`${BACKEND_URL}/api/v1/user/${type==="signin" ? "signin":"signup"}`,{
-            postInputs
+        console.log(postInputs);
+        const response =  await axios.post(`${BACKEND_URL}/api/v1/user/${type==="signin" ? "signin":"signup"}`,{
+            ...postInputs
         })
-        const jwt = response.data;
-        localStorage.setItem("token",jwt);
+        console.log(response);
+        const jw = response.data;
+        console.log(jw);
+        if(jw.jwt){
+        localStorage.setItem("token",jw.jwt);
         navigate("/blogs");
+        }
     } catch(e){
         alert(e)
     }
@@ -38,19 +43,19 @@ export const Auth = ({type}:{type:"signin" | "signup"}) => {
                 {type === "signin" ? "Dont have an account ? " :"Already have a account ?"}
                 <Link to={type === "signin" ? "/signup": "/signin"} className="underline">{type === "signin" ? " Signup" : " Signin"}</Link>
             </div>
-            {type === "signup" ? <LabelledInput label="Username" placeholder="Enter your username" onChange={(e)=>{
+            {type === "signup" ? <LabelledInput key="name" label="Username" placeholder="Enter your username" onChange={(e)=>{
                 setPostInputs({
                     ...postInputs,
                     name:e.target.value
                 })
             }}/> : null}
-            <LabelledInput label="Email" placeholder="Enter your Email" onChange={(e)=>{
+            <LabelledInput key="email" label="Email" placeholder="Enter your Email" onChange={(e)=>{
                 setPostInputs({
                     ...postInputs,
                         email:e.target.value
                 })
             }}/>
-             <LabelledInput label="Password" type={"password"} placeholder="Enter your Password" onChange={(e)=>{
+             <LabelledInput key="password" label="Password" type={"password"} placeholder="Enter your Password" onChange={(e)=>{
                 setPostInputs({
                     ...postInputs,
                     password:e.target.value
@@ -76,7 +81,7 @@ function LabelledInput({label,placeholder,onChange,type}:LabelledInputType){
     return <div>
         <div>
             <label  className="block mb-2 text-sm font-bold text-gray-900 dark:text-black pt-3">{label}</label>
-            <input type={type||"text"} onChange={onChange} id="first_name" className=" border border-black text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={placeholder} required />
+            <input type={type||"text"} onChange={onChange}  className=" border border-black text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder={placeholder} required />
         </div>
     </div>
 }

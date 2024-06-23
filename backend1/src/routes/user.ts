@@ -19,15 +19,16 @@ const userRouter = new Hono<{
     }).$extends(withAccelerate())
   
     const body = await c.req.json();
-    // const {success}=signinInput.safeParse(body);
-    // if(!success){
-    //   c.status(411);
-    //   return c.json({
-    //     msg:"Wrong form of inputs"
-    //   })
-    // }
-    try{
     
+    const {success}=signinInput.safeParse(body);
+    if(!success){
+      c.status(411);
+      return c.json({
+        msg:"Wrong form of inputs"
+      })
+    }
+    try{
+      console.log(body);
       const user = await prisma.user.create({
         data:{
           email:body.email,
@@ -35,7 +36,7 @@ const userRouter = new Hono<{
           password:body.password
         }
       })
-      console.log(user);
+      // console.log(user);
       const jwt = await sign({id:user.id},c.env.JWT_SECRET);
       return c.json({
         jwt
@@ -57,6 +58,7 @@ const userRouter = new Hono<{
     }).$extends(withAccelerate())
     try{
     const body = await c.req.json();
+    // console.log(body);
     const {success}=signinInput.safeParse(body);
     console.log(signinInput.safeParse(body));
     console.log(success);
