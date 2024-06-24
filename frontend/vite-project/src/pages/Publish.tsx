@@ -1,13 +1,18 @@
 import axios from "axios"
 import { AppBar } from "../components/Appbar"
 import { BACKEND_URL } from "../config"
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 export function Publish(){
     const navigate = useNavigate();
     const [title,setTitle] = useState("");
     const [description,setDescription] = useState("");
+    useEffect(()=>{
+         if(localStorage.getItem("token")=== null){
+            navigate("/signin")
+        }
+    },[])
     return <div>
         <AppBar/>
         <Title onChange={(e)=>setTitle(e.target.value)}/>

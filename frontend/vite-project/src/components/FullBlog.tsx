@@ -11,6 +11,8 @@ interface Blog {
 }
 export const FullBlog =({blog}: {blog:Blog}) => {
         console.log(blog)
+
+        
     return <div>
         <AppBar />        
         <div className="grid grid-cols-1 md:grid-cols-3">

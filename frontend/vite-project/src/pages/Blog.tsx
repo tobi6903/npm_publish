@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FullBlog } from "../components/FullBlog";
 import { useBlog } from "../hooks/hooks"
 import { BlogSkeleton } from "../components/BlogSkeleton";
 import { AppBar } from "../components/Appbar";
+import { useEffect } from "react";
 
 
 export default function Blog(){
@@ -11,6 +12,12 @@ export default function Blog(){
     const {loading,blog} = useBlog({
         id:id  || ""
     });
+    const navigate = useNavigate();
+    useEffect(()=>{
+        if(localStorage.getItem("token")=== null){
+           navigate("/signin")
+       }
+   },[])
     if(loading){
         return <div>
           <AppBar/>

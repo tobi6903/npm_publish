@@ -3,12 +3,16 @@ import { SignupInput} from "blog_project_common";
 import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom"
 import { BACKEND_URL } from "../config";
+import { Loader } from "./Loader";
+import { Warning } from "./Warning";
 
 
 export const Auth = ({type}:{type:"signin" | "signup"}) => {
     // const [userName,setUserName]=useState("");
     // const [email,setEmail]=useState("");
     // const [password,setPassword]=useState("");
+    const [loading, setLoading] = useState(false);
+    const [credentials,setCredentials] = useState(true);
     const [postInputs,setPostInputs] = useState<SignupInput>({
        name:"",
        email:"",
@@ -16,23 +20,40 @@ export const Auth = ({type}:{type:"signin" | "signup"}) => {
     })
     const navigate = useNavigate();
     async function sendRequest(){
+        setLoading(true);
        try{
-        console.log(postInputs);
+        // console.log(postInputs);
+        
         const response =  await axios.post(`${BACKEND_URL}/api/v1/user/${type==="signin" ? "signin":"signup"}`,{
             ...postInputs
         })
-        console.log(response);
+        // console.log(response);
         const jw = response.data;
+        if(response.data.msg === 'wrong form of message'){
+            setCredentials(false)
+        }
         console.log(jw);
         if(jw.jwt){
         localStorage.setItem("token",jw.jwt);
         navigate("/blogs");
         }
     } catch(e){
-        alert(e)
+        console.log(e);
+        setCredentials(false)
+    }
+    finally{
+        setLoading(false)
     }
        }
 
+    if(loading ){
+        return <div className="h-screen flex flex-col justify-center">
+               <div className="flex justify-center">
+                <Loader/>
+               </div>
+            </div>
+    }
+    {console.log(credentials)}
   return <div className=" h-screen flex justify-center flex-col ">
     <div className="flex justify-center">
         <div className=" px-10">
@@ -62,9 +83,9 @@ export const Auth = ({type}:{type:"signin" | "signup"}) => {
                 })
             }}/>
             
-            <button onClick={sendRequest} type="button" className="w-full mt-3 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">{type === "signup" ? "Signup" :"Signin"}</button>
-           
-        
+            <button onClick={sendRequest} type="button" className="w-full mt-3 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"> { type === "signup" ? "Signup" :"Signin" } </button>
+            {credentials ? null : <Warning/>}
+            
         </div>
     </div>
 </div>
